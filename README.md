@@ -62,7 +62,7 @@ make seed-reset    # supprime TOUS les contacts puis réinsère le jeu
 ```
 
 `make seed` s'exécute dans le conteneur `api` (à venir avec la phase 1). En attendant, depuis la machine
-hôte, sur une base dont les migrations sont appliquées :
+hôte, sur une base dont les migrations sont appliquées (voir « Migrations ») :
 
 ```bash
 npm --prefix backend run build
@@ -70,6 +70,24 @@ npm --prefix backend run seed -- --reset   # `--reset` est optionnel
 ```
 
 En `NODE_ENV=production`, le seed refuse de tourner sans `--force`.
+
+## Migrations
+
+Le schéma de la base ne change que par migration. Sur la base `crm` (celle de `DATABASE_URL`), depuis la
+machine hôte, après `npm --prefix backend run build` :
+
+```bash
+npm --prefix backend run migrate                  # applique les migrations en attente (idempotent)
+npm --prefix backend run migrate -- --revert      # défait la dernière migration appliquée, une seule
+```
+
+- Chaque appel est transactionnel : une migration qui échoue ne laisse rien derrière elle.
+- **Arrêt propre** : `Ctrl+C` (ou `SIGTERM`) laisse la migration en cours se terminer, puis ferme la connexion.
+  Un second signal force l'arrêt (code 130) : PostgreSQL annule la transaction ouverte, la base reste dans
+  l'état d'avant.
+- En `NODE_ENV=production`, `--revert` exige `--force` (il supprime des tables et des données).
+- Les migrations sont à appliquer **avant** le seed et avant de lancer l'API. Le lancement automatique au
+  démarrage du conteneur `api` arrivera avec la phase 1.
 
 ## Commandes
 
@@ -114,7 +132,7 @@ make lint typecheck test
 - Lancer le front en local (`frontend/`, voir ci-dessous) : `npm --prefix frontend install`, puis
   `npm --prefix frontend run dev` sur http://localhost:5173. Vite relaie `/api` vers `http://localhost:3000`
   (variable `API_PROXY_TARGET` pour changer de cible). Il faut donc l'API démarrée, **avec les migrations
-  appliquées** sur la base `crm` (le lancement automatique des migrations arrive avec la phase 1).
+  appliquées** sur la base `crm` (voir « Migrations »).
 - Sans backend ni base : `npm --prefix frontend run dev:mock` sert le front avec des réponses simulées (MSW,
   120 contacts, mêmes colonnes que la base). Les mêmes mocks servent aux tests.
 - Le build du front (`npm --prefix frontend run build`) **échoue** si Tailwind ou une grille/un tableur prêt à

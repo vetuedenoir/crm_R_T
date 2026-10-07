@@ -8,6 +8,7 @@
     "start": "node --env-file-if-exists=../.env dist/main.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --env-file-if-exists=../.env --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "migrate": "node --env-file-if-exists=../.env dist/migrate/run-migrate.js",
     "seed": "node --env-file-if-exists=../.env dist/seed/run-seed.js"
   },
   "dependencies": {
