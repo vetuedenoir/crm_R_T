@@ -105,7 +105,8 @@ L'appelant est forcé par le compilateur de traiter l'échec.
 - Colonnes par défaut = vraies lignes de `columns` créées par migration : aucun cas particulier entre
   colonnes natives et personnalisées.
 - Le SQL de liste (tri, filtres, pagination, total) est produit par **une seule fonction pure**
-  `buildContactsQuery(query, columns) → Result<{ sql, params }, QueryError>`, sans QueryBuilder.
+  `buildContactsQuery(query, columns) → Result<{ ids, count }, QueryError>` (deux `{ sql, params }` : la page
+  et le total, mêmes filtres), sans QueryBuilder.
 - **Tout identifiant SQL vient de la table `columns`, jamais du client. Toute valeur est un paramètre lié.**
   Jamais de concaténation de données utilisateur dans le SQL.
 - Pagination `limit` + `offset` avec tri stable (départage par `contacts.id`) et `total`.
@@ -122,7 +123,7 @@ Deux couches, volontairement séparées :
    `Result`.
 
 **Registre de types de colonnes** : chaque type implémente le contrat `ColumnTypeDefinition`
-(`name`, `storage`, `filterOperators`, `parse`, `compare`, `serialize`). C'est le seul endroit où un type est
+(`name`, `storage`, `filterOperators`, `parse`, `compare`, `serialize`, `normalizeSearch`). C'est le seul endroit où un type est
 défini. Ajouter un type = un fichier + une entrée dans le registre. Le front a son pendant (`ColumnTypeUi` :
 affichage, éditeur, saisie du filtre) ; le **back reste la source de vérité**. Pas de package partagé
 front/back : la cohérence est vérifiée par des **tests de contrat** (jeu de cas JSON commun).

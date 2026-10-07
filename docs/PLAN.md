@@ -213,7 +213,7 @@ critiques.
 | Coût | Mitigation |
 |---|---|
 | Un contact est réparti sur N lignes | Lecture en **2 requêtes** : (1) les ids de la page triée/filtrée ; (2) toutes les cellules de ces ids (`contact_id = ANY($1)`). L'assemblage est une **fonction pure** `assembleContacts` |
-| Le SQL de tri/filtre est dynamique | Il est produit par **une seule fonction pure** `buildContactsQuery(query, columns)` qui retourne `{ sql, params }`. Tous les identifiants viennent de la table `columns` (jamais du client), toutes les valeurs sont des paramètres liés |
+| Le SQL de tri/filtre est dynamique | Il est produit par **une seule fonction pure** `buildContactsQuery(query, columns)` qui retourne les deux requêtes `{ ids, count }`, chacune de forme `{ sql, params }` (mêmes filtres garantis). Tous les identifiants viennent de la table `columns` (jamais du client), toutes les valeurs sont des paramètres liés |
 | Les contraintes de type ne s'expriment pas en SQL (le type vit dans `columns`) | La cohérence est garantie par le registre de types **avant** l'écriture, et par le `CHECK` qui interdit plusieurs valeurs sur une même cellule |
 | Écritures plus nombreuses à la création d'un contact | Insertion groupée (un seul `INSERT ... VALUES (...), (...)`) dans une transaction |
 
@@ -306,6 +306,7 @@ interface ColumnTypeDefinition<TType extends ColumnTypeName, TValue> {
   parse(raw: unknown): Result<TValue, ValidationError>;           // valide et normalise
   compare(a: TValue, b: TValue): number;                           // cohérent avec le tri SQL
   serialize(value: TValue): StoredCell;                            // vers la base
+  normalizeSearch(text: string): string;                           // saisie de « contient » / « commence par »
 }
 ```
 
@@ -520,9 +521,9 @@ On ne passe à la suivante que lorsque `make lint typecheck test` est vert.
 - 3.6 Type **téléphone** : normalisation (espaces, points, tirets, parenthèses), longueur 6 à 15 chiffres, `+` initial optionnel.
 - 3.7 Registre `COLUMN_TYPES` avec vérification d'exhaustivité à la compilation.
 - 3.8 `buildContactsQuery` : tri (jointure externe), filtres (`EXISTS` / `NOT EXISTS`), pagination, total.
-  Retourne `Result<{ sql, params }, QueryError>` ; refuse une colonne inconnue ou un opérateur invalide pour le type.
+  Retourne `Result<{ ids, count }, QueryError>` (deux `{ sql, params }` : la page et le total) ; refuse une colonne inconnue ou un opérateur invalide pour le type.
 - 3.9 `assembleContacts` : regroupe les cellules par contact, dans l'ordre des ids reçus.
-- 3.10 `computeColumnOrder` : calcule les positions à partir d'une liste ordonnée d'ids, refuse doublons et ids inconnus.
+- 3.10 `computeColumnOrder` : calcule les positions à partir d'une liste ordonnée d'ids, refuse doublons, ids inconnus et colonnes oubliées (l'ordre doit être une permutation complète).
 - 3.11 Tests unitaires en tableaux `it.each`, y compris les cas limites de §7.2.
 
 **Critère de fin** : le domaine est couvert à ≥ 90 % sans aucune base de données ni mock.
