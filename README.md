@@ -7,9 +7,10 @@ infini. Stack : NestJS, PostgreSQL, React, le tout en TypeScript strict.
 - Décisions techniques et plan de réalisation : [`docs/PLAN.md`](docs/PLAN.md)
 - Règles de code et de développement : [`RULES.md`](RULES.md)
 
-> **État d'avancement** : la phase 0 (fondations) est terminée et la phase 1 (Docker) est partielle :
-> seule la base de données est conteneurisée. L'API et le front n'existent pas encore ; les sections
-> marquées _à venir_ seront complétées au fil des phases du plan.
+> **État d'avancement** : les phases 0 (fondations) et 2 (socle backend) sont terminées. La phase 1
+> (Docker) est partielle : seule la base de données est conteneurisée, l'API tourne pour l'instant en
+> local (voir « Développement »). Le front n'existe pas encore ; les sections marquées _à venir_ seront
+> complétées au fil des phases du plan.
 
 ## Prérequis
 
@@ -45,7 +46,7 @@ prochain `make up` recrée les deux bases. C'est aussi la seule façon de créer
 créé avant son ajout : PostgreSQL n'exécute les scripts d'initialisation (`docker/db/init/`) que sur un
 volume vide.
 
-_À venir_ : l'API (phase 2) et le front (phase 8) rejoindront la stack ; les URLs de l'application et
+_À venir_ : l'API (Dockerfile, phase 1) et le front (phase 8) rejoindront la stack ; les URLs de l'application et
 `make seed` (1000 contacts fictifs, phase 7) seront documentés à ce moment-là.
 
 ## Commandes
@@ -67,7 +68,7 @@ Tant qu'un projet (`backend/`, `frontend/`, `e2e/`) n'existe pas, les cibles qui
 ## Structure du dépôt
 
 ```
-backend/        API NestJS (phase 2)
+backend/        API NestJS : configuration, erreurs uniformes, health, Swagger (/api/docs)
 frontend/       Application React + Vite (phase 8)
 e2e/            Tests de bout en bout Playwright (phase 15)
 docs/           Plan de réalisation (PLAN.md) et recettes (recipes/)
