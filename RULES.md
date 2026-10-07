@@ -2,7 +2,7 @@
 
 Ces règles s'appliquent à tout le dépôt (`backend/`, `frontend/`, `e2e/`). Elles sont **vérifiées par
 l'outillage** (ESLint, `tsc`, CI) chaque fois que c'est possible. Le détail des choix et leurs
-alternatives écartées sont dans [`docs/PLAN.md`](../docs/PLAN.md).
+alternatives écartées sont dans [`docs/PLAN.md`](docs/PLAN.md).
 
 ## 1. Principes
 
