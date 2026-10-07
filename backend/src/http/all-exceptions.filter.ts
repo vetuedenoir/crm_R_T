@@ -23,7 +23,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const header = response.getHeader(REQUEST_ID_HEADER);
     const requestId = typeof header === 'string' ? header : UNKNOWN_REQUEST_ID;
 
-    this.log(exception, error, `${requestId} ${request.method} ${request.path}`);
+    this.log(exception, error, `${request.method} ${request.baseUrl}${request.path}`);
     response.status(error.httpStatus).json(toErrorBody(error, requestId));
   }
 

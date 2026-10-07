@@ -6,12 +6,7 @@ import request from 'supertest';
 import { configureApp } from '../configure-app.js';
 import { AppError } from '../errors/index.js';
 import { httpServer } from '../testing/http-server.js';
-
-// `response.body` est `any` côté supertest : on le traite comme `unknown` jusqu'à vérification.
-function bodyOf(response: request.Response): unknown {
-  const body: unknown = response.body;
-  return body;
-}
+import { bodyOf } from '../testing/response-body.js';
 
 @Controller('boom')
 class BoomController {
@@ -112,6 +107,14 @@ describe('AllExceptionsFilter', () => {
       .expect(400);
 
     expect(bodyOf(response)).toMatchObject({ error: { code: 'BAD_REQUEST' } });
+  });
+
+  it("journalise le chemin complet d'une route inconnue, préfixe compris", async () => {
+    await request(httpServer(app)).get('/api/inconnue');
+
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('GET /api/inconnue -> 404 NOT_FOUND'),
+    );
   });
 
   it('reprend le X-Request-Id du client dans la réponse et le corps', async () => {
