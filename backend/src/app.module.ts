@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 
-// Les modules métier (colonnes, contacts, santé...) s'ajoutent ici au fil des phases.
-@Module({})
+import { ConfigModule } from './config/index.js';
+import { DatabaseModule } from './database/database.module.js';
+import { HealthModule } from './health/index.js';
+
+// Les modules métier (colonnes, contacts...) s'ajoutent ici au fil des phases.
+@Module({ imports: [ConfigModule, DatabaseModule, HealthModule] })
 export class AppModule {}

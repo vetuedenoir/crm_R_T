@@ -7,9 +7,8 @@ import { JsonLogger } from './logging/index.js';
 
 async function bootstrap(): Promise<void> {
   const config = loadConfig();
-  // `bufferLogs` : les logs de démarrage passent aussi par le logger JSON.
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
-  app.useLogger(new JsonLogger());
+  // Logger fourni dès la création : un démarrage qui échoue (base injoignable) journalise aussi en JSON.
+  const app = await NestFactory.create(AppModule, { logger: new JsonLogger() });
   configureApp(app);
   // Sur SIGTERM/SIGINT : arrêt des écoutes, fin des requêtes en cours, fermeture des connexions.
   app.enableShutdownHooks();

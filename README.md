@@ -83,6 +83,11 @@ make lint typecheck test
 
 - Les commits suivent [Conventional Commits](https://www.conventionalcommits.org/fr/) : `feat:`,
   `fix:`, `test:`, `docs:`, `refactor:`, `chore:`. Un hook `commit-msg` refuse les autres formats.
+- Les tests du backend qui touchent la base (`/api/health`, puis les phases suivantes) s'exécutent contre
+  le vrai PostgreSQL, base `crm_test` : démarrer la base d'abord (`docker compose up -d db`).
+- Lancer l'API en local : `npm --prefix backend run build && npm --prefix backend start` (lit `.env`,
+  `DATABASE_URL` obligatoire). `GET http://localhost:3000/api/health` répond 200 si la base est joignable,
+  503 sinon.
 - Un hook `pre-commit` applique Prettier et ESLint aux fichiers modifiés.
 - `make lint typecheck` doit passer avant chaque commit ; on n'avance à la phase suivante du plan que
   lorsque `make lint typecheck test` est vert.

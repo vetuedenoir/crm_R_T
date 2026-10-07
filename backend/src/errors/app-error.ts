@@ -15,8 +15,9 @@ export class AppError extends Error {
     readonly code: ErrorCode,
     message: string,
     readonly details: ReadonlyArray<ErrorDetail> = [],
+    options?: ErrorOptions,
   ) {
-    super(message);
+    super(message, options);
     this.name = 'AppError';
     this.httpStatus = HTTP_STATUS_BY_CODE[code];
   }

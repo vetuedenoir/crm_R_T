@@ -10,6 +10,7 @@ export const ERROR_CODES = [
   'NOT_FOUND',
   'BAD_REQUEST',
   'CONFLICT',
+  'UNAVAILABLE',
   'INTERNAL',
 ] as const;
 
@@ -25,5 +26,6 @@ export const HTTP_STATUS_BY_CODE: Readonly<Record<ErrorCode, number>> = {
   NOT_FOUND: 404,
   BAD_REQUEST: 400,
   CONFLICT: 409,
+  UNAVAILABLE: 503,
   INTERNAL: 500,
 };

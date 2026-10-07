@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import { translateError, type AppError } from '../errors/index.js';
 
 import { toErrorBody } from './error-body.pure.js';
+import { stackWithCauses } from './error-stack.pure.js';
 import { REQUEST_ID_HEADER } from './request-id.middleware.js';
 
 const SERVER_ERROR_MIN = 500;
@@ -31,7 +32,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   private log(exception: unknown, error: AppError, context: string): void {
     const summary = `${context} -> ${String(error.httpStatus)} ${error.code}`;
     if (error.httpStatus >= SERVER_ERROR_MIN) {
-      this.logger.error(summary, exception instanceof Error ? exception.stack : String(exception));
+      this.logger.error(summary, stackWithCauses(exception));
     } else {
       this.logger.warn(summary);
     }

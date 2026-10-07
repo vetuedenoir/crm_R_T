@@ -10,6 +10,7 @@ describe('AppError', () => {
     ['NOT_FOUND', 404],
     ['BAD_REQUEST', 400],
     ['CONFLICT', 409],
+    ['UNAVAILABLE', 503],
     ['INTERNAL', 500],
   ] satisfies ReadonlyArray<readonly [ErrorCode, number]>)(
     '%s correspond au statut HTTP %i',
@@ -33,6 +34,12 @@ describe('AppError', () => {
       message: 'Valeur invalide',
       details,
     });
+  });
+
+  it("conserve la cause d'origine pour les logs", () => {
+    const cause = new Error('connexion refusée');
+
+    expect(new AppError('UNAVAILABLE', 'Indisponible', [], { cause }).cause).toBe(cause);
   });
 
   it('a une liste de détails vide par défaut', () => {
