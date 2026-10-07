@@ -1,0 +1,39 @@
+/* Seul endroit où vivent couleurs, espacements et tailles : un changement de thème ou de densité
+   se fait ici (PLAN §5.6). Les composants n'ont aucune valeur en dur. */
+:root {
+  /* Couleurs */
+  --color-bg: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-border: #dadce0;
+  --color-text: #202124;
+  --color-text-muted: #5f6368;
+  --color-accent: #1a73e8;
+  --color-accent-contrast: #ffffff;
+  --color-danger: #d93025;
+  --color-danger-bg: #fce8e6;
+  --color-success: #188038;
+  --color-success-bg: #e6f4ea;
+
+  /* Espacements */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+
+  /* Typographie */
+  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-size-base: 0.875rem;
+  --font-size-title: 1.25rem;
+
+  /* Grille (phase 10) */
+  --cell-height: 2rem;
+  --cell-width: 10rem;
+  --cell-padding-x: var(--space-2);
+  --header-height: 2.25rem;
+
+  /* Divers */
+  --radius: 0.25rem;
+  --shadow-toast: 0 2px 8px rgb(0 0 0 / 20%);
+  --z-toast: 1000;
+}

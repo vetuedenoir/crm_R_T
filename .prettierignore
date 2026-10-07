@@ -8,3 +8,6 @@ package-lock.json
 
 # Documentation rédigée à la main (tableaux alignés)
 *.md
+
+# Service worker généré par `npx msw init` : code tiers, non retouché
+**/public/mockServiceWorker.js

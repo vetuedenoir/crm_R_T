@@ -7,9 +7,9 @@ infini. Stack : NestJS, PostgreSQL, React, le tout en TypeScript strict.
 - Décisions techniques et plan de réalisation : [`docs/PLAN.md`](docs/PLAN.md)
 - Règles de code et de développement : [`RULES.md`](RULES.md)
 
-> **État d'avancement** : les phases 0 (fondations), 2 à 6 (backend et API) et 7 (seed) sont terminées. La phase 1
-> (Docker) est partielle : seule la base de données est conteneurisée, l'API tourne pour l'instant en
-> local (voir « Développement »). Le front n'existe pas encore ; les sections marquées _à venir_ seront
+> **État d'avancement** : les phases 0 (fondations), 2 à 6 (backend et API), 7 (seed) et 8 (socle frontend)
+> sont terminées. La phase 1 (Docker) est partielle : seule la base de données est conteneurisée, l'API et le
+> front tournent pour l'instant en local (voir « Développement »). Les sections marquées _à venir_ seront
 > complétées au fil des phases du plan.
 
 ## Prérequis
@@ -91,7 +91,7 @@ Tant qu'un projet (`backend/`, `frontend/`, `e2e/`) n'existe pas, les cibles qui
 
 ```
 backend/        API NestJS : configuration, erreurs, colonnes, contacts, seed, Swagger (/api/docs)
-frontend/       Application React + Vite (phase 8)
+frontend/       Application React + Vite : client d'API, hooks TanStack Query, toasts, mocks MSW (grille : phases 9 à 14)
 e2e/            Tests de bout en bout Playwright (phase 15)
 docs/           Plan de réalisation (PLAN.md) et recettes (recipes/)
 Makefile        Point d'entrée de toutes les commandes
@@ -111,6 +111,14 @@ make lint typecheck test
 - Lancer l'API en local : `npm --prefix backend run build && npm --prefix backend start` (lit `.env`,
   `DATABASE_URL` obligatoire). `GET http://localhost:3000/api/health` répond 200 si la base est joignable,
   503 sinon.
+- Lancer le front en local (`frontend/`, voir ci-dessous) : `npm --prefix frontend install`, puis
+  `npm --prefix frontend run dev` sur http://localhost:5173. Vite relaie `/api` vers `http://localhost:3000`
+  (variable `API_PROXY_TARGET` pour changer de cible). Il faut donc l'API démarrée, **avec les migrations
+  appliquées** sur la base `crm` (le lancement automatique des migrations arrive avec la phase 1).
+- Sans backend ni base : `npm --prefix frontend run dev:mock` sert le front avec des réponses simulées (MSW,
+  120 contacts, mêmes colonnes que la base). Les mêmes mocks servent aux tests.
+- Le build du front (`npm --prefix frontend run build`) **échoue** si Tailwind ou une grille/un tableur prêt à
+  l'emploi apparaît dans `frontend/package.json` (R20).
 - Un hook `pre-commit` applique Prettier et ESLint aux fichiers modifiés.
 - `make lint typecheck` doit passer avant chaque commit ; on n'avance à la phase suivante du plan que
   lorsque `make lint typecheck test` est vert.
