@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 
+import { EMPTY_CONTACTS_VIEW } from './api';
 import { AppProviders } from './app-providers';
 import styles from './app.module.css';
-import { ColumnList } from './columns';
+import { Grid } from './grid';
 import { ErrorBoundary } from './ui';
 
 export function App(): ReactNode {
@@ -11,12 +12,9 @@ export function App(): ReactNode {
       <AppProviders>
         <main className={styles['page']}>
           <h1 className={styles['title']}>CRM</h1>
-          <section>
-            <h2 className={styles['subtitle']}>Colonnes</h2>
-            <ErrorBoundary>
-              <ColumnList />
-            </ErrorBoundary>
-          </section>
+          <ErrorBoundary>
+            <Grid view={EMPTY_CONTACTS_VIEW} />
+          </ErrorBoundary>
         </main>
       </AppProviders>
     </ErrorBoundary>

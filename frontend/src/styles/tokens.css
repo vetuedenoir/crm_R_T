@@ -13,6 +13,7 @@
   --color-danger-bg: #fce8e6;
   --color-success: #188038;
   --color-success-bg: #e6f4ea;
+  --color-skeleton: #e8eaed;
 
   /* Espacements */
   --space-1: 0.25rem;
@@ -31,9 +32,11 @@
   --cell-width: 10rem;
   --cell-padding-x: var(--space-2);
   --header-height: 2.25rem;
+  --skeleton-bar-height: 0.75rem;
 
   /* Divers */
   --radius: 0.25rem;
   --shadow-toast: 0 2px 8px rgb(0 0 0 / 20%);
+  --z-header: 1;
   --z-toast: 1000;
 }

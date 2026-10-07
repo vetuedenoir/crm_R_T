@@ -7,8 +7,8 @@ infini. Stack : NestJS, PostgreSQL, React, le tout en TypeScript strict.
 - Décisions techniques et plan de réalisation : [`docs/PLAN.md`](docs/PLAN.md)
 - Règles de code et de développement : [`RULES.md`](RULES.md)
 
-> **État d'avancement** : les phases 0 (fondations), 2 à 6 (backend et API), 7 (seed) et 8 (socle frontend)
-> sont terminées. La phase 1 (Docker) est partielle : seule la base de données est conteneurisée, l'API et le
+> **État d'avancement** : les phases 0 (fondations), 2 à 6 (backend et API), 7 (seed), 8 (socle frontend), 9 (types côté front)
+> et 10 (grille en lecture seule, scroll infini) sont terminées. La phase 1 (Docker) est partielle : seule la base de données est conteneurisée, l'API et le
 > front tournent pour l'instant en local (voir « Développement »). Les sections marquées _à venir_ seront
 > complétées au fil des phases du plan.
 
@@ -91,7 +91,7 @@ Tant qu'un projet (`backend/`, `frontend/`, `e2e/`) n'existe pas, les cibles qui
 
 ```
 backend/        API NestJS : configuration, erreurs, colonnes, contacts, seed, Swagger (/api/docs)
-frontend/       Application React + Vite : client d'API, hooks TanStack Query, toasts, mocks MSW (grille : phases 9 à 14)
+frontend/       Application React + Vite : client d'API, hooks TanStack Query, toasts, mocks MSW, registre de types, grille virtualisée (édition, tri, colonnes : phases 11 à 14)
 e2e/            Tests de bout en bout Playwright (phase 15)
 docs/           Plan de réalisation (PLAN.md) et recettes (recipes/)
 Makefile        Point d'entrée de toutes les commandes

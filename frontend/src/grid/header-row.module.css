@@ -1,0 +1,17 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  width: max-content;
+  background: var(--color-surface);
+}
+
+.row {
+  display: flex;
+}
+
+.header .columnHeader {
+  font-weight: 600;
+  height: var(--header-height);
+  line-height: calc(var(--header-height) - 1px);
+}
