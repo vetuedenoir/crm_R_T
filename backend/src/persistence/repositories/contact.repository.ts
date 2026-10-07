@@ -21,6 +21,34 @@ export class ContactRepository {
     return contactIdOf(String(result.identifiers[0]?.['id']));
   }
 
+  // Insertion groupée pour le seed. `created_at` croît d'une milliseconde par contact à partir de
+  // `startAt` : l'ordre par défaut de la grille (création, puis id) est celui des ids retournés.
+  async insertMany(
+    count: number,
+    startAt: Date,
+    manager?: EntityManager,
+  ): Promise<ReadonlyArray<ContactId>> {
+    const rows: unknown = await this.db(manager).query(
+      `WITH inserted AS (
+         INSERT INTO contacts (created_at)
+         SELECT $1::timestamptz + n * interval '1 millisecond' FROM generate_series(0, $2::int - 1) AS n
+         RETURNING id, created_at
+       )
+       SELECT id FROM inserted ORDER BY created_at`,
+      [startAt, count],
+    );
+    return readContactIds(rows);
+  }
+
+  async countAll(manager?: EntityManager): Promise<number> {
+    return readCount(await this.db(manager).query('SELECT count(*) AS total FROM contacts'));
+  }
+
+  // Les cellules partent en cascade.
+  async deleteAll(manager?: EntityManager): Promise<void> {
+    await this.db(manager).query('DELETE FROM contacts');
+  }
+
   // Les deux requêtes de liste viennent de `buildContactsQuery` : le SQL n'est jamais écrit ici.
   async findIds(
     statement: SqlStatement,

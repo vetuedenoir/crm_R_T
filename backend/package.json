@@ -7,9 +7,11 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node --env-file-if-exists=../.env dist/main.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --env-file-if-exists=../.env --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --env-file-if-exists=../.env --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "seed": "node --env-file-if-exists=../.env dist/seed/run-seed.js"
   },
   "dependencies": {
+    "@faker-js/faker": "10.6.0",
     "@nestjs/common": "12.1.2",
     "@nestjs/core": "12.1.2",
     "@nestjs/platform-express": "12.1.2",

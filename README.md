@@ -7,7 +7,7 @@ infini. Stack : NestJS, PostgreSQL, React, le tout en TypeScript strict.
 - Décisions techniques et plan de réalisation : [`docs/PLAN.md`](docs/PLAN.md)
 - Règles de code et de développement : [`RULES.md`](RULES.md)
 
-> **État d'avancement** : les phases 0 (fondations) et 2 (socle backend) sont terminées. La phase 1
+> **État d'avancement** : les phases 0 (fondations), 2 à 6 (backend et API) et 7 (seed) sont terminées. La phase 1
 > (Docker) est partielle : seule la base de données est conteneurisée, l'API tourne pour l'instant en
 > local (voir « Développement »). Le front n'existe pas encore ; les sections marquées _à venir_ seront
 > complétées au fil des phases du plan.
@@ -49,14 +49,36 @@ volume vide.
 _À venir_ : l'API (Dockerfile, phase 1) et le front (phase 8) rejoindront la stack ; les URLs de l'application et
 `make seed` (1000 contacts fictifs, phase 7) seront documentés à ce moment-là.
 
+## Données fictives (seed)
+
+Le seed insère **1000 contacts** (nom, entreprise, téléphone, date, score) dans les colonnes par défaut.
+Il est **reproductible** (graine `faker` fixe : mêmes contacts à chaque fois) et **idempotent** (relancé, il
+n'ajoute rien ; sur une base partielle, il ajoute seulement la suite). Environ 5 % des entreprises et 10 %
+des téléphones sont volontairement vides, pour exercer le filtre « vide ».
+
+```bash
+make seed          # complète la base jusqu'à 1000 contacts
+make seed-reset    # supprime TOUS les contacts puis réinsère le jeu
+```
+
+`make seed` s'exécute dans le conteneur `api` (à venir avec la phase 1). En attendant, depuis la machine
+hôte, sur une base dont les migrations sont appliquées :
+
+```bash
+npm --prefix backend run build
+npm --prefix backend run seed -- --reset   # `--reset` est optionnel
+```
+
+En `NODE_ENV=production`, le seed refuse de tourner sans `--force`.
+
 ## Commandes
 
 | Commande            | Rôle                                                          |
 | ------------------- | ------------------------------------------------------------- |
 | `make help`         | Liste les commandes disponibles                               |
 | `make up` / `down`  | Démarre / arrête la stack Docker (base de données seule)      |
-| `make seed`         | Insère 1000 contacts fictifs _(à venir)_                      |
-| `make seed-reset`   | Vide les contacts puis réinsère le jeu de données _(à venir)_ |
+| `make seed`         | Insère 1000 contacts fictifs (idempotent, voir « Données fictives ») |
+| `make seed-reset`   | Vide les contacts puis réinsère le jeu de données             |
 | `make lint`         | ESLint et vérification du format (Prettier)                   |
 | `make typecheck`    | `tsc` dans chaque projet                                      |
 | `make test`         | Tous les tests (`test-back`, `test-front`, `test-e2e`)        |
@@ -68,7 +90,7 @@ Tant qu'un projet (`backend/`, `frontend/`, `e2e/`) n'existe pas, les cibles qui
 ## Structure du dépôt
 
 ```
-backend/        API NestJS : configuration, erreurs uniformes, health, Swagger (/api/docs)
+backend/        API NestJS : configuration, erreurs, colonnes, contacts, seed, Swagger (/api/docs)
 frontend/       Application React + Vite (phase 8)
 e2e/            Tests de bout en bout Playwright (phase 15)
 docs/           Plan de réalisation (PLAN.md) et recettes (recipes/)

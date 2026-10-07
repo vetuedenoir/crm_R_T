@@ -79,4 +79,33 @@ describe('ContactRepository (PostgreSQL réel)', () => {
     expect(ids).toEqual(expect.arrayContaining([first, second]));
     expect(total).toBe(3);
   });
+
+  it('[R17] insère un lot de contacts dans l’ordre de création et les compte', async () => {
+    const startAt = new Date('2030-01-02T03:04:05.000Z');
+
+    const ids = await repository.insertMany(3, startAt);
+
+    expect(ids).toHaveLength(3);
+    expect(await repository.countAll()).toBe(3);
+    const rows: ReadonlyArray<{ readonly id: string }> = await dataSource.query(
+      'SELECT id FROM contacts ORDER BY created_at, id',
+    );
+    expect(rows.map((row) => row.id)).toEqual(ids);
+  });
+
+  it('[R17] supprime tous les contacts et leurs cellules', async () => {
+    const [id] = await repository.insertMany(2, new Date());
+    const column: ReadonlyArray<{ readonly id: string }> = await dataSource.query(
+      `INSERT INTO columns (name, type, position) VALUES ('Nom', 'text', 0) RETURNING id`,
+    );
+    await dataSource.query(
+      'INSERT INTO cells (contact_id, column_id, value_text) VALUES ($1, $2, $3)',
+      [id, column[0]?.id, 'Ada'],
+    );
+
+    await repository.deleteAll();
+
+    expect(await repository.countAll()).toBe(0);
+    expect(await dataSource.query('SELECT 1 FROM cells')).toHaveLength(0);
+  });
 });
