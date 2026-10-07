@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { APP_CONFIG, type AppConfig } from '../config/index.js';
+import { MIGRATIONS } from '../persistence/index.js';
 
 // Sans délai, une base figée bloquerait aussi `/api/health` et toute requête qui en dépend.
 const DB_TIMEOUT_MS = 3000;
@@ -21,6 +22,7 @@ const DB_RETRY_DELAY_MS = 1000;
         retryDelay: DB_RETRY_DELAY_MS,
         // Le schéma ne change que par migration (RULES §6).
         synchronize: false,
+        migrations: MIGRATIONS,
         extra: { connectionTimeoutMillis: DB_TIMEOUT_MS, statement_timeout: DB_TIMEOUT_MS },
       }),
     }),
