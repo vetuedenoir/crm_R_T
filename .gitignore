@@ -1,0 +1,31 @@
+# Dépendances
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Couverture et rapports de tests
+coverage/
+playwright-report/
+test-results/
+
+# Caches d'outils
+.eslintcache
+*.tsbuildinfo
+.vite/
+
+# Environnement local (seul .env.example est versionné)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Éditeurs et système
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
