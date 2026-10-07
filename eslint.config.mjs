@@ -80,6 +80,12 @@ export default tseslint.config(
     },
   },
 
+  // Un module Nest est une classe vide portée par son décorateur : c'est le fonctionnement normal.
+  {
+    files: ['**/*.module.ts'],
+    rules: { '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }] },
+  },
+
   // Composants React : fonctions et constantes en PascalCase.
   {
     files: ['**/*.tsx'],
