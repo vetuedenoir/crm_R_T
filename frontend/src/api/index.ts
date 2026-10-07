@@ -19,9 +19,10 @@ export {
   type SortDirection,
   type SortSpec,
 } from './contacts-view';
-export { PAGE_SIZE, fetchContactsPage } from './contacts-api';
+export { PAGE_SIZE, fetchContactsPage, updateContact, type CellUpdates } from './contacts-api';
 export {
   COLUMN_TYPE_NAMES,
+  cellValueSchema,
   columnIdSchema,
   columnsSchema,
   contactIdSchema,

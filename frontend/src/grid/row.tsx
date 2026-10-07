@@ -1,8 +1,10 @@
 import { memo, type ReactNode } from 'react';
 
-import type { Column, Contact } from '../api';
+import type { Column, ColumnId, Contact } from '../api';
 
 import { Cell, SkeletonCell } from './cell';
+import type { CellActions } from './grid-controller';
+import type { Editing } from './grid-state.pure';
 import styles from './row.module.css';
 
 interface RowProps {
@@ -15,6 +17,11 @@ interface RowProps {
 
 interface ContactRowProps extends RowProps {
   readonly contact: Contact;
+  // Colonne active de cette ligne, `null` si la cellule active est ailleurs : une ligne qui n'est pas
+  // concernée reçoit les mêmes props d'une frappe à l'autre, donc `memo` lui évite un rendu.
+  readonly activeColumnId: ColumnId | null;
+  readonly editing: Editing | null;
+  readonly actions: CellActions;
 }
 
 // L'en-tête est la ligne 1 de la grille : le premier contact est donc la ligne 2 (aria-rowindex est base 1).
@@ -27,6 +34,9 @@ export const ContactRow = memo(function ContactRow({
   index,
   measureRef,
   contact,
+  activeColumnId,
+  editing,
+  actions,
 }: ContactRowProps): ReactNode {
   return (
     <div
@@ -36,9 +46,20 @@ export const ContactRow = memo(function ContactRow({
       data-index={index}
       aria-rowindex={ariaRowIndex(index)}
     >
-      {columns.map((column) => (
-        <Cell key={column.id} column={column} value={contact.cells[column.id]} />
-      ))}
+      {columns.map((column) => {
+        const active = column.id === activeColumnId;
+        return (
+          <Cell
+            key={column.id}
+            column={column}
+            contactId={contact.id}
+            value={contact.cells[column.id]}
+            active={active}
+            editing={active ? editing : null}
+            actions={actions}
+          />
+        );
+      })}
     </div>
   );
 });

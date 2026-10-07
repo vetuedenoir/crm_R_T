@@ -10,6 +10,7 @@ import { flattenPages, latestTotal } from './grid-paging.pure';
 import { GridViewport } from './grid-viewport';
 import styles from './grid.module.css';
 import { SkeletonGrid } from './skeleton-grid';
+import { useGridEditing } from './use-grid-editing';
 
 interface GridProps {
   readonly view?: ContactsView;
@@ -28,12 +29,14 @@ function LoadedGrid({ columns, query, pages }: LoadedGridProps): ReactNode {
   }, [fetchNextPage]);
   const contacts = useMemo(() => flattenPages(pages), [pages]);
   const total = latestTotal(pages);
+  const editing = useGridEditing({ columns, contacts });
   return (
     <div className={styles['container']}>
       <p className={styles['counter']}>{formatContactCount(total)}</p>
       <GridViewport
         columns={columns}
         contacts={contacts}
+        editing={editing}
         total={total}
         hasNextPage={query.hasNextPage}
         isFetchingNextPage={query.isFetchingNextPage}

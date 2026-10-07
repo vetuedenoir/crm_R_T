@@ -12,7 +12,7 @@ declare module '@tanstack/react-query' {
 }
 
 export interface QueryClientOptions {
-  // Appelé pour toute mutation en échec : c'est là que l'interface affiche un toast.
+  // Appelé pour toute mutation en échec sans `meta.inlineError` : c'est là que l'interface affiche un toast.
   readonly onMutationError: (error: unknown) => void;
   // Les tests passent `() => 0` pour ne pas attendre entre deux essais.
   readonly retryDelay?: (attemptIndex: number) => number;
@@ -31,6 +31,13 @@ export function createQueryClient({
         refetchOnWindowFocus: false,
       },
     },
-    mutationCache: new MutationCache({ onError: onMutationError }),
+    mutationCache: new MutationCache({
+      onError: (error, _variables, _context, mutation) => {
+        // Une mutation qui affiche elle-même son échec (erreur dans la cellule) ne doit pas doubler d'un toast.
+        if (mutation.meta?.['inlineError'] !== true) {
+          onMutationError(error);
+        }
+      },
+    }),
   });
 }

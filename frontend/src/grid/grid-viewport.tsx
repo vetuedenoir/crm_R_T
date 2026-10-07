@@ -4,6 +4,7 @@ import type { Column, Contact } from '../api';
 
 import styles from './grid-viewport.module.css';
 import { HeaderRow } from './header-row';
+import type { GridEditing } from './use-grid-editing';
 import { useGridVirtualizer } from './use-grid-virtualizer';
 import { VirtualRows } from './virtual-rows';
 
@@ -16,12 +17,18 @@ interface GridViewportProps {
   readonly isFetchingNextPage: boolean;
   readonly hasNextPageError: boolean;
   readonly onLoadMore: () => void;
+  readonly editing: GridEditing;
 }
 
 // Seules les lignes proches de la zone visible existent dans le DOM (R2) ; la hauteur totale vient de `total`.
 // Les lignes rendues restent dans le flux (marges haute et basse) plutôt qu'en position absolue : la grille
 // garde ainsi la largeur de ses colonnes.
-export function GridViewport({ columns, contacts, ...paging }: GridViewportProps): ReactNode {
+export function GridViewport({
+  columns,
+  contacts,
+  editing,
+  ...paging
+}: GridViewportProps): ReactNode {
   const { scrollerRef, rowCount, items, measureRef, paddingTop, paddingBottom } =
     useGridVirtualizer({ loadedCount: contacts.length, ...paging });
 
@@ -33,6 +40,7 @@ export function GridViewport({ columns, contacts, ...paging }: GridViewportProps
         aria-label="Contacts"
         aria-colcount={columns.length}
         aria-rowcount={rowCount + 1}
+        {...editing.gridProps}
       >
         <HeaderRow columns={columns} />
         <VirtualRows
@@ -40,6 +48,7 @@ export function GridViewport({ columns, contacts, ...paging }: GridViewportProps
           columns={columns}
           contacts={contacts}
           measureRef={measureRef}
+          editing={editing}
           paddingTop={paddingTop}
           paddingBottom={paddingBottom}
         />

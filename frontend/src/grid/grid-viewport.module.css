@@ -11,6 +11,11 @@
   min-width: 100%;
 }
 
+/* La cellule active porte déjà le repère visuel : un contour autour de toute la grille ne dirait rien de plus. */
+.grid:focus {
+  outline: none;
+}
+
 .empty {
   margin: 0;
   padding: var(--space-6);

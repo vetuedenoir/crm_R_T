@@ -8,10 +8,42 @@
   line-height: calc(var(--cell-height) - 1px);
   text-overflow: ellipsis;
   white-space: nowrap;
+  /* Garde la cellule active sous l'en-tête collant quand elle est amenée dans la vue. */
+  scroll-margin-top: var(--header-height);
 }
 
 .right {
   text-align: right;
+}
+
+.active {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+/* L'éditeur remplit la cellule ; le message d'erreur déborde dessous, sans changer la hauteur de la ligne. */
+.editing {
+  position: relative;
+  overflow: visible;
+  padding: 0;
+  text-overflow: clip;
+}
+
+.error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  max-width: calc(var(--cell-width) * 2);
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius);
+  background: var(--color-danger-bg);
+  box-shadow: var(--shadow-toast);
+  color: var(--color-danger);
+  line-height: normal;
+  white-space: normal;
+  width: max-content;
 }
 
 .skeletonBar {
