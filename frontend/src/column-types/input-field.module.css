@@ -1,0 +1,29 @@
+.input {
+  width: 100%;
+  height: var(--cell-height);
+  padding: 0 var(--cell-padding-x);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.input:focus {
+  border-color: var(--color-accent);
+  outline: 1px solid var(--color-accent);
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.fields {
+  display: flex;
+  gap: var(--space-2);
+}
