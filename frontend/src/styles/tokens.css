@@ -37,6 +37,8 @@
   /* Divers */
   --radius: 0.25rem;
   --shadow-toast: 0 2px 8px rgb(0 0 0 / 20%);
+  --shadow-menu: 0 2px 8px rgb(0 0 0 / 20%);
   --z-header: 1;
+  --z-menu: 2;
   --z-toast: 1000;
 }

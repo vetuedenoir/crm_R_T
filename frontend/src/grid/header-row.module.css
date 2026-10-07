@@ -10,8 +10,19 @@
   display: flex;
 }
 
+/* `overflow: visible` : le menu de tri déborde de la cellule. Le nom, lui, garde ses points de suspension. */
 .header .columnHeader {
-  font-weight: 600;
+  display: flex;
+  align-items: center;
   height: var(--header-height);
+  overflow: visible;
+  font-weight: 600;
   line-height: calc(var(--header-height) - 1px);
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

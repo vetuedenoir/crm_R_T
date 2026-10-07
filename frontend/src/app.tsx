@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { EMPTY_CONTACTS_VIEW } from './api';
 import { AppProviders } from './app-providers';
 import styles from './app.module.css';
 import { Grid } from './grid';
@@ -13,7 +12,7 @@ export function App(): ReactNode {
         <main className={styles['page']}>
           <h1 className={styles['title']}>CRM</h1>
           <ErrorBoundary>
-            <Grid view={EMPTY_CONTACTS_VIEW} />
+            <Grid />
           </ErrorBoundary>
         </main>
       </AppProviders>

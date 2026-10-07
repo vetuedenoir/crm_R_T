@@ -8,18 +8,27 @@ export function buildApiUrl(origin: string, path: string, search?: URLSearchPara
   return `${origin}${API_PREFIX}${path}${query}`;
 }
 
-// Paramètres de `GET /contacts` (voir `ListContactsQueryDto`). Un tri ou des filtres vides sont omis.
+// Tri et filtres d'une vue, au format de `GET /contacts` (voir `ListContactsQueryDto`). Un tri ou des filtres
+// vides sont omis. L'URL de la page reprend ce format : une vue partagée est lisible par l'API telle quelle.
+export function viewSearchParams(view: ContactsView): URLSearchParams {
+  const params = new URLSearchParams();
+  if (view.sort !== null) {
+    params.set('sort', `${view.sort.columnId}:${view.sort.direction}`);
+  }
+  if (view.filters.length > 0) {
+    params.set('filters', JSON.stringify(view.filters));
+  }
+  return params;
+}
+
 export function contactsSearchParams(
   view: ContactsView,
   offset: number,
   limit: number,
 ): URLSearchParams {
   const params = new URLSearchParams({ offset: String(offset), limit: String(limit) });
-  if (view.sort !== null) {
-    params.set('sort', `${view.sort.columnId}:${view.sort.direction}`);
-  }
-  if (view.filters.length > 0) {
-    params.set('filters', JSON.stringify(view.filters));
+  for (const [name, value] of viewSearchParams(view)) {
+    params.set(name, value);
   }
   return params;
 }

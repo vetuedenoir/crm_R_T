@@ -3,12 +3,12 @@ import type { ReactNode } from 'react';
 import type { Column, Contact } from '../api';
 
 import styles from './grid-viewport.module.css';
-import { HeaderRow } from './header-row';
+import { HeaderRow, type HeaderSortProps } from './header-row';
 import type { GridEditing } from './use-grid-editing';
 import { useGridVirtualizer } from './use-grid-virtualizer';
 import { VirtualRows } from './virtual-rows';
 
-interface GridViewportProps {
+interface GridViewportProps extends HeaderSortProps {
   readonly columns: ReadonlyArray<Column>;
   // Contacts déjà chargés, dans l'ordre ; les lignes suivantes sont des lignes squelette.
   readonly contacts: ReadonlyArray<Contact>;
@@ -27,6 +27,8 @@ export function GridViewport({
   columns,
   contacts,
   editing,
+  sort,
+  onSortChange,
   ...paging
 }: GridViewportProps): ReactNode {
   const { scrollerRef, rowCount, items, measureRef, paddingTop, paddingBottom } =
@@ -42,7 +44,7 @@ export function GridViewport({
         aria-rowcount={rowCount + 1}
         {...editing.gridProps}
       >
-        <HeaderRow columns={columns} />
+        <HeaderRow columns={columns} sort={sort} onSortChange={onSortChange} />
         <VirtualRows
           items={items}
           columns={columns}

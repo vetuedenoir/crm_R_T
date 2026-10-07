@@ -10,6 +10,7 @@ export {
 } from './api-errors';
 export { isApiError } from './api-client';
 export { fetchColumns } from './columns-api';
+export { viewSearchParams } from './url.pure';
 export {
   EMPTY_CONTACTS_VIEW,
   FILTER_OPERATORS,

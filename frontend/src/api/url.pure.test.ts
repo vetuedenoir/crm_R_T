@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { buildColumn } from '../mocks';
 
 import { EMPTY_CONTACTS_VIEW, type ContactsView } from './contacts-view';
-import { buildApiUrl, contactsSearchParams } from './url.pure';
+import { buildApiUrl, contactsSearchParams, viewSearchParams } from './url.pure';
 
 describe('buildApiUrl', () => {
   it.each([
@@ -51,5 +51,22 @@ describe('contactsSearchParams', () => {
     );
 
     expect(params.has('filters')).toBe(false);
+  });
+});
+
+describe('viewSearchParams', () => {
+  const column = buildColumn({ position: 4, type: 'number' });
+
+  it('est vide pour une vue sans tri ni filtre', () => {
+    expect(viewSearchParams(EMPTY_CONTACTS_VIEW).size).toBe(0);
+  });
+
+  it('écrit le tri et les filtres, sans pagination', () => {
+    const params = viewSearchParams({
+      sort: { columnId: column.id, direction: 'asc' },
+      filters: [{ columnId: column.id, operator: 'isEmpty', values: [] }],
+    });
+
+    expect([...params.keys()]).toEqual(['sort', 'filters']);
   });
 });

@@ -7,6 +7,7 @@ import { DEFAULT_COLUMNS } from '../mocks';
 import { server } from '../mocks/server';
 import { errorBody } from '../test/error-body';
 import { renderWithProviders } from '../test/render-app';
+import { openEditor, tabToGrid } from '../test/view-helpers';
 import { mockVirtualLayout } from '../test/virtual-layout';
 
 import { Grid } from './grid';
@@ -35,11 +36,16 @@ function recordPatches(): RecordedPatch[] {
 }
 
 // Les lignes se repèrent par leur rang (1 = premier contact) : pendant l'édition, le texte de la cellule disparaît.
+// Les lignes squelette ont aussi un rang, mais elles seront remplacées : on attend la vraie ligne.
 async function rowOf(contactNumber: number): Promise<HTMLElement> {
   return waitFor(() => {
     const row = screen
       .getAllByRole('row')
-      .find((candidate) => candidate.dataset['index'] === String(contactNumber - 1));
+      .find(
+        (candidate) =>
+          candidate.dataset['index'] === String(contactNumber - 1) &&
+          candidate.getAttribute('aria-busy') !== 'true',
+      );
     if (row === undefined) {
       throw new Error(`Contact ${String(contactNumber)} pas encore affiché`);
     }
@@ -86,7 +92,7 @@ describe('Grid : édition en cellule', () => {
     await userEvent.keyboard('{Enter}');
 
     expect(await screen.findByText('Ada Lovelace')).toBeInTheDocument();
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(openEditor()).not.toBeInTheDocument();
     expect(patches).toHaveLength(1);
     expect(patches[0]?.body).toEqual({ values: { [String(NAME)]: 'Ada Lovelace' } });
     // Après la validation, le clavier revient à la grille : les flèches fonctionnent.
@@ -131,7 +137,7 @@ describe('Grid : édition en cellule', () => {
     await typeInto(await startEditing(1, NAME_COLUMN), 'Brouillon');
     await userEvent.keyboard('{Escape}');
 
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(openEditor()).not.toBeInTheDocument();
     expect(screen.getByText('Contact 1')).toBeInTheDocument();
     expect(patches).toHaveLength(0);
   });
@@ -157,7 +163,7 @@ describe('Grid : édition en cellule', () => {
     await startEditing(1, NAME_COLUMN);
     await userEvent.keyboard('{Enter}');
 
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(openEditor()).not.toBeInTheDocument();
     expect(patches).toHaveLength(0);
   });
 
@@ -298,7 +304,7 @@ describe('Grid : navigation au clavier', () => {
     renderWithProviders(<Grid />);
     await screen.findByText('Contact 1');
 
-    await userEvent.tab();
+    await tabToGrid();
 
     expect(screen.getByRole('grid')).toHaveFocus();
     const first = await cellOf(1, NAME_COLUMN);
@@ -309,7 +315,7 @@ describe('Grid : navigation au clavier', () => {
   it('[R6] les flèches déplacent la cellule active et s’arrêtent aux bords', async () => {
     renderWithProviders(<Grid />);
     await screen.findByText('Contact 1');
-    await userEvent.tab();
+    await tabToGrid();
 
     await userEvent.keyboard('{ArrowRight}{ArrowDown}');
     expect(activeCellId()).toBe((await cellOf(2, COMPANY_COLUMN)).id);
@@ -329,7 +335,7 @@ describe('Grid : navigation au clavier', () => {
     expect(await screen.findByText('Ada')).toBeInTheDocument();
     expect(patches).toHaveLength(1);
     expect(activeCellId()).toBe((await cellOf(1, COMPANY_COLUMN)).id);
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(openEditor()).not.toBeInTheDocument();
   });
 
   it('[R16] Tab avec une saisie invalide garde l’éditeur ouvert', async () => {
