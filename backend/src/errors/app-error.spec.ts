@@ -7,6 +7,8 @@ describe('AppError', () => {
     ['CONTACT_NOT_FOUND', 404],
     ['INVALID_FILTER', 400],
     ['INVALID_SORT', 400],
+    ['NOT_FOUND', 404],
+    ['BAD_REQUEST', 400],
     ['CONFLICT', 409],
     ['INTERNAL', 500],
   ] satisfies ReadonlyArray<readonly [ErrorCode, number]>)(
