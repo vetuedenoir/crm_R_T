@@ -4,16 +4,21 @@
   "description": "Outillage du dépôt (lint, format). Chaque projet (backend, frontend) a son propre package.json.",
   "type": "module",
   "scripts": {
+    "prepare": "husky",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
     "@eslint/js": "9.39.5",
     "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-check-file": "3.3.2",
     "eslint-plugin-import": "2.32.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
     "prettier": "3.9.9",
     "typescript": "6.0.3",
     "typescript-eslint": "8.71.1"
