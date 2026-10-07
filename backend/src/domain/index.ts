@@ -11,6 +11,7 @@ export {
 } from './cell.js';
 export type { CellRow, Column, Contact } from './column.js';
 export type { ColumnTypeDefinition } from './column-type-definition.js';
+export { findNameConflict, MAX_COLUMN_NAME_LENGTH, parseColumnName } from './column-name.pure.js';
 export { COLUMN_TYPE_NAMES, type ColumnTypeName } from './column-type-name.js';
 export { COLUMN_TYPES, parseCellValue, serializeCellValue } from './column-types/registry.pure.js';
 export {
@@ -28,3 +29,4 @@ export type {
   SqlStatement,
 } from './contacts-query.js';
 export { FILTER_OPERATORS, type FilterOperator } from './filter-operator.js';
+export { nextColumnPosition } from './next-column-position.pure.js';

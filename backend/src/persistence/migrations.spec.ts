@@ -80,6 +80,14 @@ describe('migrations (PostgreSQL réel)', () => {
     expect(await existingTables(dataSource)).toEqual(TABLES);
   });
 
+  it('[R9] la base refuse deux colonnes dont les noms ne diffèrent que par la casse', async () => {
+    await dataSource.runMigrations();
+
+    await expect(
+      dataSource.query(`INSERT INTO columns (name, type, position) VALUES ('NOM', 'text', 9)`),
+    ).rejects.toThrow(/columns_name_lower_key/);
+  });
+
   it('[R14] la base refuse une cellule portant deux valeurs', async () => {
     await dataSource.runMigrations();
     const [contact]: ReadonlyArray<{ readonly id: string }> = await dataSource.query(
