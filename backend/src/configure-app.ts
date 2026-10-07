@@ -3,6 +3,7 @@ import { ValidationPipe, type INestApplication } from '@nestjs/common';
 import { API_PREFIX } from './api-prefix.js';
 import { requestValidationError } from './errors/index.js';
 import { AllExceptionsFilter, requestIdMiddleware } from './http/index.js';
+import { setupSwagger } from './setup-swagger.js';
 
 // Partagé par `main.ts` et les tests d'intégration : ils doivent exercer la même application.
 export function configureApp(app: INestApplication): void {
@@ -17,4 +18,6 @@ export function configureApp(app: INestApplication): void {
       exceptionFactory: requestValidationError,
     }),
   );
+  // En dernier : le document est généré à partir des routes déjà déclarées.
+  setupSwagger(app);
 }
