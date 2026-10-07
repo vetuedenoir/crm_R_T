@@ -1,4 +1,4 @@
-import { toCellRow, toColumn } from './row-mapping.pure.js';
+import { readContactIds, readCount, toCellRow, toColumn } from './row-mapping.pure.js';
 
 const ID = '00000000-0000-4000-8000-000000000001';
 
@@ -43,5 +43,39 @@ describe('toCellRow', () => {
         valueDate: null,
       }),
     ).toThrow();
+  });
+});
+
+describe('readContactIds', () => {
+  it('convertit les lignes en identifiants, dans l’ordre reçu', () => {
+    const other = '00000000-0000-4000-8000-000000000002';
+
+    expect(readContactIds([{ id: other.toUpperCase() }, { id: ID }])).toEqual([other, ID]);
+  });
+
+  it.each([
+    ['un résultat qui n’est pas une liste', { id: ID }],
+    ['une ligne sans id', [{ name: 'x' }]],
+    ['un id qui n’est pas un UUID', [{ id: 'abc' }]],
+  ])('signale une réponse inattendue: %s', (_label, raw) => {
+    expect(() => readContactIds(raw)).toThrow();
+  });
+});
+
+describe('readCount', () => {
+  it.each([
+    ['une chaîne (bigint du pilote)', [{ total: '500' }], 500],
+    ['zéro', [{ total: '0' }], 0],
+  ])('lit le total depuis %s', (_label, raw, expected) => {
+    expect(readCount(raw)).toBe(expected);
+  });
+
+  it.each([
+    ['aucune ligne', []],
+    ['un total absent', [{}]],
+    ['un total négatif', [{ total: '-1' }]],
+    ['un total non numérique', [{ total: 'beaucoup' }]],
+  ])('signale une réponse inattendue: %s', (_label, raw) => {
+    expect(() => readCount(raw)).toThrow();
   });
 });

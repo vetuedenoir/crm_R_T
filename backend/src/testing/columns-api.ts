@@ -1,23 +1,12 @@
 import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { DataSource } from 'typeorm';
+import type { DataSource } from 'typeorm';
 
 import { ColumnsModule } from '../columns/index.js';
-import { APP_CONFIG, ConfigModule, type AppConfig } from '../config/index.js';
-import { configureApp } from '../configure-app.js';
-import { DatabaseModule } from '../database/database.module.js';
-import { PersistenceModule } from '../persistence/index.js';
 
 import { httpServer } from './http-server.js';
 import { bodyOf } from './response-body.js';
-import { buildTestDatabaseUrl } from './test-database-url.pure.js';
-
-const testConfig: AppConfig = {
-  nodeEnv: 'test',
-  port: 0,
-  databaseUrl: buildTestDatabaseUrl(process.env),
-};
+import { startTestApp } from './test-app.js';
 
 export interface ColumnBody {
   readonly id: string;
@@ -67,18 +56,7 @@ export interface ColumnsApi {
 }
 
 export async function startColumnsApi(): Promise<ColumnsApi> {
-  const moduleRef = await Test.createTestingModule({
-    imports: [ConfigModule, DatabaseModule, PersistenceModule, ColumnsModule],
-  })
-    .overrideProvider(APP_CONFIG)
-    .useValue(testConfig)
-    .compile();
-  const app = moduleRef.createNestApplication({ logger: false });
-  configureApp(app);
-  await app.init();
-  const dataSource = app.get(DataSource);
-  await dataSource.runMigrations();
-
+  const { app, dataSource } = await startTestApp([ColumnsModule]);
   const server = (): ReturnType<typeof httpServer> => httpServer(app);
   return {
     app,

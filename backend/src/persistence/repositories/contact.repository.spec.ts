@@ -60,4 +60,23 @@ describe('ContactRepository (PostgreSQL réel)', () => {
     expect(await repository.deleteById(id)).toBe(true);
     expect(await dataSource.query('SELECT 1 FROM contacts WHERE id = $1', [id])).toHaveLength(0);
   });
+
+  it('[R15] liste les ids et le total depuis le SQL fourni', async () => {
+    const first = await repository.insert();
+    const second = await repository.insert();
+    await repository.insert();
+
+    const ids = await repository.findIds({
+      sql: 'SELECT id FROM contacts WHERE id = ANY($1) ORDER BY created_at, id',
+      params: [[first, second]],
+    });
+    const total = await repository.count({
+      sql: 'SELECT count(*) AS total FROM contacts',
+      params: [],
+    });
+
+    expect(ids).toHaveLength(2);
+    expect(ids).toEqual(expect.arrayContaining([first, second]));
+    expect(total).toBe(3);
+  });
 });

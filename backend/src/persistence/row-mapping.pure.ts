@@ -60,3 +60,37 @@ export function toCellRow(row: RawCellRow): CellRow {
     valueDate: row.valueDate,
   };
 }
+
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === 'object' && value !== null;
+}
+
+// Résultat brut de `dataSource.query` : `unknown` jusqu'à vérification. Une forme inattendue signale une
+// requête ou une base incohérente, donc une exception.
+function rowsOf(raw: unknown): ReadonlyArray<Readonly<Record<string, unknown>>> {
+  if (!Array.isArray(raw) || !raw.every(isRecord)) {
+    throw new Error('Résultat de requête inattendu : une liste de lignes était attendue');
+  }
+  return raw;
+}
+
+// Première requête de la lecture d'une page : `SELECT c.id ...`, dans l'ordre du tri.
+export function readContactIds(raw: unknown): ReadonlyArray<ContactId> {
+  return rowsOf(raw).map((row) => {
+    const id = row['id'];
+    if (typeof id !== 'string') {
+      throw new Error('Résultat de requête inattendu : la colonne id est absente');
+    }
+    return contactIdOf(id);
+  });
+}
+
+// `count(*)` est un `bigint` : le pilote le rend en chaîne.
+export function readCount(raw: unknown): number {
+  const [row] = rowsOf(raw);
+  const total = Number(row?.['total']);
+  if (!Number.isSafeInteger(total) || total < 0) {
+    throw new Error('Résultat de requête inattendu : le total est absent ou invalide');
+  }
+  return total;
+}

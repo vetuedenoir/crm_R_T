@@ -30,3 +30,9 @@ export type {
 } from './contacts-query.js';
 export { FILTER_OPERATORS, type FilterOperator } from './filter-operator.js';
 export { nextColumnPosition } from './next-column-position.pure.js';
+export {
+  planCellWrites,
+  type CellUpsert,
+  type CellWriteError,
+  type CellWritePlan,
+} from './plan-cell-writes.pure.js';
